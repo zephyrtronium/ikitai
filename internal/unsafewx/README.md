@@ -7,9 +7,9 @@ of unsafewx is unsafe, even though it typically doesn't require you to import
 
 Allocate a `Block` using `unsafewx.Alloc` or `unsafewx.MustAlloc`. The amount
 of memory actually allocated is always rounded up to a multiple of the page
-size. `Block`s implement the `io` interfaces `Writer` to write machine code to
-the block, `WriterTo` to transfer out the contents of the block, and `Closer`
-to free the memory. The backing memory is not garbage collected; losing all
+size. Blocks implement the `io` interfaces `Writer` to write machine code to
+the block, `WriterTo` to copy out the contents of the block, and `Closer` to
+free the memory. The backing memory is not garbage collected; losing all
 references to a block without having called its `Close` method is a memory
 leak, just like doing the same with `os.File` is a file descriptor leak.
 However, a function obtained from a block can also spawn goroutines that use
@@ -22,8 +22,8 @@ to executable memory is a programmer error, not a program error. If `Exec`
 succeeds, you can call `Func` to obtain a function value. It is your
 responsibility to ensure that the function address you provide points directly
 to the beginning of a procedure that is fully ABI-compatible with the desired
-function type, and that the block is not `Close`d while the returned function
-is executing.
+function type, and that the block is not `Close`d while its code is being
+executed.
 
 Blocks are not synchronized. Calling any of their methods from multiple
 goroutines requires explicit synchronization mechanisms. The exception to this
@@ -36,10 +36,13 @@ unrecoverable panics in the best case scenario. Take care. 🙂
 
 ## Supported Platforms
 
-Currently, unsafewx should work on any platform that Go targets, except plan9.
-It doesn't appear that plan9 provides the mechanisms for W^X memory, so it
-probably will not be supported in the future.
+Currently, unsafewx has been tested (including with executing code) on Windows,
+and it should work on all Unix-like platforms. js/wasm may be a future target.
 
 It wouldn't be unwarranted to add more versions of `func Example` in
 `wx_amd64_test.go` for more arches, but otherwise, unsafewx itself works
 regardless of the value of `$GOARCH`.
+
+Due to the extreme dependence on low-level runtime and ABI details, I'm not
+certain that unsafewx will work with gccgo. The example test should cause an
+access violation if it doesn't work in the expected way.

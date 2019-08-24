@@ -1,12 +1,13 @@
-// +build !windows,!plan9
+// +build aix darwin dragonfly freebsd linux netbsd openbsd solaris
 
 package unsafewx
 
 import (
 	"fmt"
-	"golang.org/x/sys/unix"
 	"reflect"
 	"unsafe"
+
+	"golang.org/x/sys/unix"
 )
 
 // Alloc allocates a block of W^X memory. Panics if n < 0.
@@ -17,9 +18,9 @@ func Alloc(n int) (*Block, error) {
 	ps := unix.Getpagesize()
 	c := (n + ps - 1) / ps * ps
 	if c == 0 {
-		// It is crucial that we do not try to mmap zero bytes because Mmap
-		// uses a special region for zero-byte allocations and we don't want to
-		// change its protections.
+		// It is crucial that we do not try to mmap zero bytes, because Mmap
+		// uses a special region for zero-byte allocations, and we don't want
+		// to change its protections.
 		c = ps
 	}
 	logv("allocating", n, "bytes rounded up to", c)

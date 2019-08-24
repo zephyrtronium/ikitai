@@ -72,7 +72,7 @@ func (b *Block) Cursor() uintptr {
 
 // Write writes bytes into the block. If the number of bytes to write exceeds
 // the capacity of the block, Write ignores the excess and returns
-// CapacityExceeded. Panics if the block is not valid or if b.Exec has
+// ErrCapacityExceeded. Panics if the block is not valid or if b.Exec has
 // succeeded.
 func (b *Block) Write(p []byte) (n int, err error) {
 	if b.x {
@@ -84,7 +84,7 @@ func (b *Block) Write(p []byte) (n int, err error) {
 	n = len(p)
 	if c := b.Available(); n > c {
 		// Writing too much data.
-		err = CapacityExceeded
+		err = ErrCapacityExceeded
 		n = c
 	}
 	memmove(unsafe.Pointer(b.v+b.n), unsafe.Pointer(&p[0]), uintptr(n))
@@ -152,21 +152,22 @@ func (b *Block) Func(addr uintptr, typ reflect.Type) interface{} {
 	// z.Interface() dereferences the function pointer we use here because in
 	// gc, function values (i.e., uses of functions other than by static,
 	// package-level names) are pointers to pointers to code. See
-	// https://golang.org/s/go11func.
+	// https://golang.org/s/go11func. It might be necessary to have a separate
+	// implementation for gccgo, but I'm not sure and can't test that easily.
 	x := b.v + addr
 	(*rvalue)(unsafe.Pointer(&z)).ptr = unsafe.Pointer(&x)
 	return z.Interface()
 }
 
-// CapacityExceeded is the error returned when attempting to write more data
+// ErrCapacityExceeded is the error returned when attempting to write more data
 // than a block can hold.
-var CapacityExceeded = errors.New("wx: write exceeded block availability")
+var ErrCapacityExceeded = errors.New("wx: write exceeded block availability")
 
-// InvalidClose is the error returned when attempting to close a block that is
-// nil or already closed.
-var InvalidClose = errors.New("wx: close on invalid block")
+// ErrInvalidClose is the error returned when attempting to close a block that
+// is nil or already closed.
+var ErrInvalidClose = errors.New("wx: close on invalid block")
 
-// Verbose, if non-nil, is used to log every memory operation.
+// Verbose is used to log every memory operation, if it is not nil.
 var Verbose *log.Logger
 
 func logv(args ...interface{}) {
