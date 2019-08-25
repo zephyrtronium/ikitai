@@ -154,6 +154,7 @@ func (b *Block) Func(addr uintptr, typ reflect.Type) interface{} {
 	// package-level names) are pointers to pointers to code. See
 	// https://golang.org/s/go11func. It might be necessary to have a separate
 	// implementation for gccgo, but I'm not sure and can't test that easily.
+	// Wasm might also be different.
 	x := b.v + addr
 	(*rvalue)(unsafe.Pointer(&z)).ptr = unsafe.Pointer(&x)
 	return z.Interface()
