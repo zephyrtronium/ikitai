@@ -46,3 +46,10 @@ regardless of the value of `$GOARCH`.
 Due to the extreme dependence on low-level runtime and ABI details, I'm not
 certain that unsafewx will work with gccgo. The example test should cause an
 access violation if it doesn't work in the expected way.
+
+## Broken – Do Not Use
+
+I haven't tried it, but I'm fairly certain that if the garbage collector runs
+while any goroutine is executing code in a Block, the runtime will panic. The
+proper API for something like this would probably be to provide uintptr
+addresses and then to use syscall.Syscall and friends to execute the code.

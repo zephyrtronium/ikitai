@@ -12,6 +12,10 @@ vision is completely compiling the runtime itself.
 
 This project is probably too ambitious.
 
+My original intent was to keep this repository private until it becomes viable
+as a real project (probably never), but I get enough questions about run-time
+executable memory that it will save me time to publish that module.
+
 ## Planned Features
 
 - Extensions: Run Go code from any trusted source without needing to compile statically.
