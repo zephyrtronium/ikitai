@@ -30,7 +30,5 @@ This project is probably too ambitious.
 		- Generate DWARF and information for runtime.FuncForPC?
 - Optimization
 - Additional arches
-	+ amd64p32
 	+ x86?
 	+ arm64?
-	+ wasm?
