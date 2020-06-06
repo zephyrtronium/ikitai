@@ -36,8 +36,8 @@ unrecoverable panics in the best case scenario. Take care. 🙂
 
 ## Supported Platforms
 
-Currently, unsafewx has been tested (including with executing code) on Windows,
-and it should work on all Unix-like platforms.
+Currently, unsafewx has been tested (including with executing code) on
+windows/amd64 and linux/amd64, and it should work on all Unix-like platforms.
 
 It wouldn't be unwarranted to add more versions of `func Example` in
 `wx_amd64_test.go` for more arches, but otherwise, unsafewx itself works
