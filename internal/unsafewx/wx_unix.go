@@ -56,7 +56,7 @@ func (b *Block) Exec() error {
 // Close releases the block's memory. Following this, b.IsValid returns false.
 func (b *Block) Close() error {
 	if !b.IsValid() {
-		return InvalidClose
+		return ErrInvalidClose
 	}
 	logv("freeing data at", fmt.Sprintf("%#x", b.v), "with len", b.n, "cap", b.c)
 	if err := unix.Munmap(*(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{Data: b.v, Len: int(b.c), Cap: int(b.c)}))); err != nil {
